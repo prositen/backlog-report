@@ -1,0 +1,9 @@
+fastapi
+fastapi-pagination
+aiohttp
+
+pydantic
+alembic
+sqlalchemy
+
+kp-py-utils@ https://${FEELGOOD_ACCESS_TOKEN}@github.com/feelgood/kp-py-utils/archive/refs/tags/v4.7.1.tar.gz
