@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from app.db.database import SessionLocal, update_saved
@@ -53,6 +54,8 @@ async def get_custom_fields_from_shortcut(db: Session = Depends(get_db)):
 
 @router.get('/backlog')
 async def get_backlog_from_shortcut(db: Session = Depends(get_db)):
+    labels = {label.id: label
+              for label in await get_labels_from_shortcut(db)}
     stories = await resources.shortcut.get_stories(state='Önskemål', limit=-1)
     db_stories = [
         Story(id=story['id'],
@@ -66,16 +69,16 @@ async def get_backlog_from_shortcut(db: Session = Depends(get_db)):
               created=story['created_at'],
               updated=story['updated_at'],
               description=story.get('description'),
-              labels=[Label(id=label['id'],
-                            name=label['name'])
-                      for label in story.get('labels', [])]
+              labels=[labels[label['id']]
+                      for label in story.get('labels', [])],
+              active=True
               )
 
         for story in stories
     ]
-    for story in db_stories:
-        db.merge(story)
 
-    db.commit()
+    deactivate_q = update(Story).values(active=False)
+    db.execute(deactivate_q)
+    await update_saved(db, Story, db_stories)
 
     return {'message': f'{len(db_stories)} stories imported'}

@@ -1,7 +1,7 @@
 """Initial
 
 Revision ID: 029882430866
-Revises: 
+Revises:
 Create Date: 2024-04-30 12:37:06.394272+02:00
 
 """
@@ -27,7 +27,7 @@ def upgrade() -> None:
     )
     op.create_table('labels',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('stories',

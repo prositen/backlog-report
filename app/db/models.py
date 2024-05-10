@@ -1,8 +1,8 @@
 from typing import List
 
-from sqlalchemy import ForeignKey, Table, Column
+from sqlalchemy import ForeignKey, Table, Column, SQLColumnExpression, select
 from sqlalchemy.ext.associationproxy import association_proxy, AssociationProxy
-from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method, Comparator
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .database import Base
@@ -33,6 +33,8 @@ class Story(Base):
     updated: Mapped[str]
     shortcut_url: Mapped[str]
     description: Mapped[str]
+    active: Mapped[bool]
+
     custom_fields: Mapped[List['StoryCustomFields']] = relationship(
         backref='story_custom_fields')
     labels: Mapped[List['Label']] = relationship(secondary=story_labels)
@@ -50,10 +52,6 @@ class Story(Base):
             if cf.name == 'Periodsplanering':
                 return cf.value
         return None
-
-    @hybrid_property
-    def label_names(self):
-        return [label.name for label in self.labels]
 
 
 class CustomField(Base):

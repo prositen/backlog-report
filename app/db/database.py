@@ -18,7 +18,8 @@ Base = declarative_base()
 
 
 async def update_saved(db: Session, db_class: Base,
-                       new_items: list[Base]):
+                       new_items: list[Base],
+                       remove_missing=True):
     old_items = db.execute(select(db_class))
     old_items = old_items.scalars()
     old_items = {
@@ -35,7 +36,7 @@ async def update_saved(db: Session, db_class: Base,
     update_items = set(new_items.keys()).intersection(old_items.keys())
     if add_items:
         db.add_all([l for _id, l in new_items.items() if _id in add_items])
-    if remove_items:
+    if remove_missing and remove_items:
         delete_query = delete(db_class).where(db_class.id.in_(remove_items))
         db.execute(delete_query)
     for uid in update_items:

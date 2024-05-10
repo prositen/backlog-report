@@ -1,6 +1,8 @@
 from typing import Optional
 
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, field_validator
+
+from app.db.models import Label
 
 
 class StoryBase(BaseModel):
@@ -10,10 +12,15 @@ class StoryBase(BaseModel):
     description: str
     created: str
     updated: str
-    # custom_fields: list['CustomFieldWithValue']
-    label_names: list[str]
+    labels: list[str]
+    active: bool
     priority: Optional[str]
     period: Optional[str]
+
+    @field_validator('labels', mode='before')
+    @classmethod
+    def transform_labels(cls, raw_labels: list['Label']) -> list[str]:
+        return [rl.name for rl in raw_labels]
 
     class Config:
         from_attributes = True
@@ -45,3 +52,9 @@ class LabelBase(BaseModel):
 
 class LabelNames(BaseModel):
     name: str
+
+
+class BacklogResponse(BaseModel):
+    items: list[StoryBase]
+    count: int
+    total: int
