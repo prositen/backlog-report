@@ -84,11 +84,21 @@ async def apply_story_filters(query: Select, params: dict):
         query = query.filter(
             Story.name.ilike(f'%{value}%') | Story.description.ilike(f'%{value}%'))
     if value := params.get('filter[priority]'):
-        query = query.filter(StoryCustomFields.name == 'Priority',
-                             StoryCustomFields.value.ilike(value))
+        if value.lower() in ('', 'null', 'None', 'saknas'):
+            query = query.filter(
+                ~Story.custom_fields.any(StoryCustomFields.name == 'Priority'))
+        else:
+            query = query.filter(StoryCustomFields.name == 'Priority',
+                                 StoryCustomFields.value.ilike(value))
     if value := params.get('filter[period]'):
-        query = query.filter(StoryCustomFields.name == 'Periodsplanering',
-                             StoryCustomFields.value.ilike(value))
+        if value.lower() in ('', 'null', 'None', 'saknas'):
+            query = query.filter(
+                ~Story.custom_fields.any(StoryCustomFields.name == 'Periodsplanering'))
+        else:
+            query = query.filter(StoryCustomFields.name == 'Periodsplanering',
+                                 StoryCustomFields.value.ilike(value))
+    if value := params.get('filter[label]'):
+        query = query.filter(Label.name == value)
     return query
 
 
