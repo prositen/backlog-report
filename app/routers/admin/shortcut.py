@@ -81,4 +81,5 @@ async def get_backlog_from_shortcut(db: Session = Depends(get_db)):
     db.execute(deactivate_q)
     await update_saved(db, Story, db_stories)
 
-    return {'message': f'{len(db_stories)} stories imported'}
+    return {'message': f'{len(db_stories)} stories imported',
+            'total': len(db_stories)}

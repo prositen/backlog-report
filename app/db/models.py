@@ -12,6 +12,11 @@ story_labels = Table('story_labels',
                      Column('story_id', ForeignKey('stories.id')),
                      Column('label_id', ForeignKey('labels.id')))
 
+story_persons = Table('story_persons',
+                      Base.metadata,
+                      Column('story_id', ForeignKey('stories.id')),
+                      Column('person_id', ForeignKey('persons.id')))
+
 
 class StoryCustomFields(Base):
     __tablename__ = 'story_custom_fields'
@@ -38,6 +43,7 @@ class Story(Base):
     custom_fields: Mapped[List['StoryCustomFields']] = relationship(
         backref='story_custom_fields')
     labels: Mapped[List['Label']] = relationship(secondary=story_labels)
+    persons: Mapped[List['Person']] = relationship(secondary=story_persons)
 
     @hybrid_property
     def priority(self):
@@ -73,4 +79,10 @@ class CustomFieldValue(Base):
 class Label(Base):
     __tablename__ = 'labels'
     id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
+
+
+class Person(Base):
+    __tablename__ = 'persons'
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str]

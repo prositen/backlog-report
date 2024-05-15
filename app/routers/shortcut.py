@@ -5,11 +5,11 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select, func, Select, asc, desc
 from sqlalchemy.orm import Session
 
-from app.db.models import Story, Label, StoryCustomFields
+from app.db.models import Story, Label, StoryCustomFields, Person
 from app.db.schemas import BacklogResponse
 from app.routers.admin.shortcut import get_db
 
-router = APIRouter(prefix='/shortcut', tags=['shortcut', 'admin'])
+router = APIRouter(prefix='/shortcut', tags=['shortcut', 'stories'])
 
 
 class SortOrder(Enum):
@@ -99,6 +99,8 @@ async def apply_story_filters(query: Select, params: dict):
                                  StoryCustomFields.value.ilike(value))
     if value := params.get('filter[label]'):
         query = query.filter(Label.name == value)
+    #if value := params.get('filter[person]'):
+    #    query = query.filter(Person)
     return query
 
 
@@ -149,9 +151,11 @@ def period_sort(period):
 @router.get('/backlog')
 async def get_backlog(params: dict = Depends(search_params),
                       db: Session = Depends(get_db)) -> BacklogResponse:
+
     query = select(Story) \
         .join(Label, Story.labels, isouter=True) \
-        .join(StoryCustomFields, Story.custom_fields, isouter=True)
+        .join(StoryCustomFields, Story.custom_fields, isouter=True) \
+        .join(Person, Story.persons, isouter=True)
 
     total = db.execute(select(func.count(Story.id))).scalar()
 
@@ -171,4 +175,3 @@ async def get_backlog(params: dict = Depends(search_params),
         'count': len(matching),
         'total': total
     }
-    # return paginate(db, query)

@@ -13,6 +13,7 @@ class StoryBase(BaseModel):
     created: str
     updated: str
     labels: list[str]
+    persons: list['Person']
     active: bool
     priority: Optional[str]
     period: Optional[str]
@@ -48,6 +49,18 @@ class CustomFieldBase(BaseModel):
 class LabelBase(BaseModel):
     id: int
     name: str
+
+
+class PersonBase(BaseModel):
+    name: str
+
+
+class PersonCreate(PersonBase):
+    pass
+
+
+class Person(PersonBase):
+    id: int
 
 
 class LabelNames(BaseModel):
