@@ -1,5 +1,4 @@
 import aiohttp
-from urllib.parse import urlparse
 
 from app.core.config import Config
 

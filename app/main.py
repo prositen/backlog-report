@@ -12,16 +12,10 @@ app = FastAPI(
     version=Config.get_config().version
 )
 
-origins = [
-    "http://localhost",
-    "http://localhost:5173",
-    "http://localhost:8000",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -45,4 +39,3 @@ def index():
     logger.debug(__name__)
 
     return {"name": app.title, "version": Config.get_config().version}
-

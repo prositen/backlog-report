@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.db.database import SessionLocal, update_saved
 from app.db.models import Label, CustomField, Story, StoryCustomFields, CustomFieldValue
-from app.db.schemas import CustomFieldBase, LabelBase, StoryBase
+from app.db.schemas import CustomFieldBase, LabelBase
 from app.resources.resources import resources
 
 router = APIRouter(prefix='/admin/shortcut', tags=['shortcut', 'admin'])
@@ -56,6 +56,7 @@ async def get_custom_fields_from_shortcut(db: Session = Depends(get_db)):
 async def get_backlog_from_shortcut(db: Session = Depends(get_db)):
     labels = {label.id: label
               for label in await get_labels_from_shortcut(db)}
+    await get_custom_fields_from_shortcut(db)
     stories = await resources.shortcut.get_stories(state='Önskemål', limit=-1)
     db_stories = [
         Story(id=story['id'],

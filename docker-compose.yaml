@@ -1,0 +1,21 @@
+version: '2'
+services:
+  backlog-report:
+    image: prositen/backlog-report
+    container_name: backlog-report
+    ports:
+      - "5150:80"
+    environment:
+      SHORTCUT_TOKEN_FILE: /run/secrets/shortcut_token
+    volumes:
+      - "/opt/kundportal/secrets:/run/secrets"
+
+
+  backlog-ui:
+    image: prositen/backlog-ui
+    container_name: backlog-ui
+    environment:
+      BACKLOG_REPORT_URL: "http://localhost:5150"
+    ports:
+      - "5160:80"
+

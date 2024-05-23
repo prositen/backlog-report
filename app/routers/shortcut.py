@@ -99,8 +99,6 @@ async def apply_story_filters(query: Select, params: dict):
                                  StoryCustomFields.value.ilike(value))
     if value := params.get('filter[label]'):
         query = query.filter(Label.name == value)
-    #if value := params.get('filter[person]'):
-    #    query = query.filter(Person)
     return query
 
 
@@ -151,7 +149,6 @@ def period_sort(period):
 @router.get('/backlog')
 async def get_backlog(params: dict = Depends(search_params),
                       db: Session = Depends(get_db)) -> BacklogResponse:
-
     query = select(Story) \
         .join(Label, Story.labels, isouter=True) \
         .join(StoryCustomFields, Story.custom_fields, isouter=True) \
