@@ -1,5 +1,5 @@
 from .admin import shortcut as admin_shortcut
-from . import shortcut, persons, stories
+from . import shortcut, persons, stories, components
 
 
 def api_router():
@@ -9,4 +9,5 @@ def api_router():
     router.include_router(admin_shortcut.router)
     router.include_router(persons.router)
     router.include_router(stories.router)
+    router.include_router(components.router)
     return router

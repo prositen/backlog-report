@@ -9,7 +9,7 @@ services:
       SHORTCUT_TOKEN_FILE: /run/secrets/shortcut_token
     volumes:
       - "/opt/kundportal/secrets:/run/secrets"
-
+      - "/home/anna/kod/shortcut-report/data:/app/data"
 
   backlog-ui:
     image: prositen/backlog-ui

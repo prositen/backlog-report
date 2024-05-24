@@ -34,3 +34,16 @@ def get_person_by_id(person_id: int, db: Session = Depends(get_db)):
     if person := db.execute(query).scalar_one_or_none():
         return person
     raise HTTPException(404, detail="Person not found")
+
+
+@router.post('/{person_id}', response_model=schemas.Person)
+def update_person_by_id(person_id: int, person: schemas.Person, db: Session = Depends(get_db)):
+    query = select(models.Person).where(models.Person.id == person_id)
+    if db_person := db.execute(query).scalar_one_or_none():
+        person.id = person_id
+        update_person = models.Person(**person.dict())
+        db.merge(update_person)
+        db.commit()
+        db.refresh(db_person)
+        return db_person
+    raise HTTPException(404, detail="Person not found")

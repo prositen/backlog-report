@@ -14,6 +14,8 @@ class StoryBase(BaseModel):
     updated: str
     labels: list[str]
     persons: list['Person']
+    components: list['Component']
+
     active: bool
     priority: Optional[str]
     period: Optional[str]
@@ -65,6 +67,18 @@ class Person(PersonBase):
 
 class LabelNames(BaseModel):
     name: str
+
+
+class ComponentBase(BaseModel):
+    name: str
+
+
+class ComponentCreate(ComponentBase):
+    pass
+
+
+class Component(ComponentBase):
+    id: int
 
 
 class BacklogResponse(BaseModel):

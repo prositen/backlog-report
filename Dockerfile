@@ -13,6 +13,7 @@ COPY --from=build /install /
 ENV PYTHONPATH .:/app
 COPY ./ /app
 WORKDIR /app
+VOLUME /app/data
 COPY ./version.txt /app
 COPY ./start.sh /start.sh
 RUN chmod +x /start.sh
