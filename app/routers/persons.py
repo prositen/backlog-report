@@ -11,7 +11,7 @@ router = APIRouter(prefix='/persons', tags=['persons'])
 
 
 @router.post('', response_model=schemas.Person)
-def create_person(person: schemas.PersonCreate, db: Session = Depends(get_db)):
+async def create_person(person: schemas.PersonCreate, db: Session = Depends(get_db)):
     query = select(models.Person).where(models.Person.name == person.name)
     if db.execute(query).first():
         raise HTTPException(status_code=400, detail="Person already exists")
@@ -23,13 +23,13 @@ def create_person(person: schemas.PersonCreate, db: Session = Depends(get_db)):
 
 
 @router.get('', response_model=List[schemas.Person])
-def get_persons(db: Session = Depends(get_db)):
+async def get_persons(db: Session = Depends(get_db)):
     query = select(models.Person)
     return db.execute(query).scalars()
 
 
 @router.get('/{person_id}', response_model=schemas.Person)
-def get_person_by_id(person_id: int, db: Session = Depends(get_db)):
+async def get_person_by_id(person_id: int, db: Session = Depends(get_db)):
     query = select(models.Person).where(models.Person.id == person_id)
     if person := db.execute(query).scalar_one_or_none():
         return person
@@ -37,7 +37,7 @@ def get_person_by_id(person_id: int, db: Session = Depends(get_db)):
 
 
 @router.post('/{person_id}', response_model=schemas.Person)
-def update_person_by_id(person_id: int, person: schemas.Person, db: Session = Depends(get_db)):
+async def update_person_by_id(person_id: int, person: schemas.Person, db: Session = Depends(get_db)):
     query = select(models.Person).where(models.Person.id == person_id)
     if db_person := db.execute(query).scalar_one_or_none():
         person.id = person_id

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.db import schemas, models
 from app.routers.admin.shortcut import get_db
+from app.routers.components import get_component_by_id
 from app.routers.persons import get_person_by_id
 
 router = APIRouter(prefix="/stories", tags=["stories"])
@@ -23,7 +24,7 @@ async def get_story_by_id(story_id: int, db: Session = Depends(get_db)):
 @router.put('/{story_id}/person/{person_id}', response_model=schemas.StoryBase)
 async def add_story_person(story_id: int, person_id: int, db: Session = Depends(get_db)):
     story = await get_story_by_id(story_id, db)
-    person = get_person_by_id(person_id, db)
+    person = await get_person_by_id(person_id, db)
     story.persons.append(person)
     db.commit()
     db.refresh(story)
@@ -37,6 +38,30 @@ async def remove_story_person(story_id: int, person_id: int, db: Session = Depen
     try:
         index = person_ids.index(person_id)
         story.persons.pop(index)
+        db.commit()
+        db.refresh(story)
+    except ValueError:
+        pass
+    return story
+
+
+@router.put('/{story_id}/component/{component_id}', response_model=schemas.StoryBase)
+async def add_story_component(story_id: int, component_id: int, db: Session = Depends(get_db)):
+    story = await get_story_by_id(story_id, db)
+    component = await get_component_by_id(component_id, db)
+    story.components.append(component)
+    db.commit()
+    db.refresh(story)
+    return story
+
+
+@router.delete('/{story_id}/component/{component_id}', response_model=schemas.StoryBase)
+async def remove_story_component(story_id: int, component_id: int, db: Session = Depends(get_db)):
+    story = await get_story_by_id(story_id, db)
+    component_ids = [c.id for c in story.components]
+    try:
+        index = component_ids.index(component_id)
+        story.components.pop(index)
         db.commit()
         db.refresh(story)
     except ValueError:

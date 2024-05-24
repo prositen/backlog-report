@@ -11,7 +11,7 @@ router = APIRouter(prefix='/components', tags=['components'])
 
 
 @router.post('', response_model=schemas.Component)
-def create_component(component: schemas.ComponentCreate, db: Session = Depends(get_db)):
+async def create_component(component: schemas.ComponentCreate, db: Session = Depends(get_db)):
     query = select(models.Component).where(models.Component.name == component.name)
     if db.execute(query).first():
         raise HTTPException(status_code=400, detail="Component already exists")
@@ -23,13 +23,13 @@ def create_component(component: schemas.ComponentCreate, db: Session = Depends(g
 
 
 @router.get('', response_model=List[schemas.Component])
-def get_components(db: Session = Depends(get_db)):
+async def get_components(db: Session = Depends(get_db)):
     query = select(models.Component)
     return db.execute(query).scalars()
 
 
 @router.get('/{component_id}', response_model=schemas.Component)
-def get_component_by_id(component_id: int, db: Session = Depends(get_db)):
+async def get_component_by_id(component_id: int, db: Session = Depends(get_db)):
     query = select(models.Component).where(models.Component.id == component_id)
     if component := db.execute(query).scalar_one_or_none():
         return component
@@ -37,8 +37,8 @@ def get_component_by_id(component_id: int, db: Session = Depends(get_db)):
 
 
 @router.post('/{component_id}', response_model=schemas.Component)
-def update_component_by_id(component_id: int, component: schemas.Component,
-                           db: Session = Depends(get_db)):
+async def update_component_by_id(component_id: int, component: schemas.Component,
+                                 db: Session = Depends(get_db)):
     query = select(models.Component).where(models.Component.id == component_id)
     if db_component := db.execute(query).scalar_one_or_none():
         component.id = component_id
