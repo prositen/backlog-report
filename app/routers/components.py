@@ -48,3 +48,13 @@ async def update_component_by_id(component_id: int, component: schemas.Component
         db.refresh(db_component)
         return db_component
     raise HTTPException(404, detail="Component not found")
+
+
+@router.delete('/{component_id}')
+async def delete_component_by_id(component_id: int, db: Session = Depends(get_db)):
+    query = select(models.Component).where(models.Component.id == component_id)
+    if db_component := db.execute(query).scalar_one_or_none():
+        db.delete(db_component)
+        db.commit()
+        return {'message': f'Deleted {db_component.name} successfully'}
+    raise HTTPException(404, detail="Component not found")

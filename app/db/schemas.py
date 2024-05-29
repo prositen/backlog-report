@@ -15,6 +15,7 @@ class StoryBase(BaseModel):
     labels: list[str]
     persons: list['Person']
     components: list['Component']
+    epic_groups: list['EpicGroup']
 
     active: bool
     priority: Optional[str]
@@ -85,3 +86,15 @@ class BacklogResponse(BaseModel):
     items: list[StoryBase]
     count: int
     total: int
+
+
+class EpicGroupBase(BaseModel):
+    name: str
+
+
+class EpicGroupCreate(EpicGroupBase):
+    pass
+
+
+class EpicGroup(EpicGroupBase):
+    id: int

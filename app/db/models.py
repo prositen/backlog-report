@@ -22,6 +22,11 @@ story_components = Table('story_components',
                          Column('story_id', ForeignKey('stories.id')),
                          Column('component_id', ForeignKey('components.id')))
 
+story_epic_groups = Table('story_epic_groups',
+                          Base.metadata,
+                          Column('story_id', ForeignKey('stories.id')),
+                          Column('epic_group_id', ForeignKey('epic_groups.id')))
+
 
 class StoryCustomFields(Base):
     __tablename__ = 'story_custom_fields'
@@ -50,6 +55,7 @@ class Story(Base):
     labels: Mapped[List['Label']] = relationship(secondary=story_labels)
     persons: Mapped[List['Person']] = relationship(secondary=story_persons)
     components: Mapped[List['Component']] = relationship(secondary=story_components)
+    epic_groups: Mapped[List['EpicGroup']] = relationship(secondary=story_epic_groups)
 
     @hybrid_property
     def priority(self):
@@ -96,5 +102,11 @@ class Person(Base):
 
 class Component(Base):
     __tablename__ = 'components'
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str]
+
+
+class EpicGroup(Base):
+    __tablename__ = 'epic_groups'
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str]
