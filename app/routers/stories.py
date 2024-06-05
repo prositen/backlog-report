@@ -96,7 +96,7 @@ async def remove_story_epic_group(story_id: int, epic_group_id: int,
     return story
 
 
-@router.put('/{story_id}/products/{product_id}', response_model=schemas.StoryBase)
+@router.put('/{story_id}/product/{product_id}', response_model=schemas.StoryBase)
 async def add_story_product(story_id: int, product_id: int, db: Session = Depends(get_db)):
     story = await get_story_by_id(story_id, db)
     product = await get_product_by_id(product_id, db)
@@ -106,7 +106,7 @@ async def add_story_product(story_id: int, product_id: int, db: Session = Depend
     return story
 
 
-@router.delete('/{story_id}/products/{product_id}', response_model=schemas.StoryBase)
+@router.delete('/{story_id}/product/{product_id}', response_model=schemas.StoryBase)
 async def remove_story_product(story_id: int, product_id: int, db: Session = Depends(get_db)):
     story = await get_story_by_id(story_id, db)
     product_ids = [e.id for e in story.products]
