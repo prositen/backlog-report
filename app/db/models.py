@@ -27,6 +27,11 @@ story_epic_groups = Table('story_epic_groups',
                           Column('story_id', ForeignKey('stories.id')),
                           Column('epic_group_id', ForeignKey('epic_groups.id')))
 
+story_products = Table('story_products',
+                       Base.metadata,
+                       Column('story_id', ForeignKey('stories.id')),
+                       Column('product_id', ForeignKey('products.id')))
+
 
 class StoryCustomFields(Base):
     __tablename__ = 'story_custom_fields'
@@ -50,12 +55,16 @@ class Story(Base):
     description: Mapped[str]
     active: Mapped[bool]
 
+    # From shortcut
     custom_fields: Mapped[List['StoryCustomFields']] = relationship(
         backref='story_custom_fields')
     labels: Mapped[List['Label']] = relationship(secondary=story_labels)
+
+    # Locally administrated
     persons: Mapped[List['Person']] = relationship(secondary=story_persons)
     components: Mapped[List['Component']] = relationship(secondary=story_components)
     epic_groups: Mapped[List['EpicGroup']] = relationship(secondary=story_epic_groups)
+    products: Mapped[List['Product']] = relationship(secondary=story_products)
 
     @hybrid_property
     def priority(self):
@@ -94,19 +103,22 @@ class Label(Base):
     name: Mapped[str]
 
 
-class Person(Base):
+class ReportBase:
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str]
+
+
+class Person(Base, ReportBase):
     __tablename__ = 'persons'
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str]
 
 
-class Component(Base):
+class Component(Base, ReportBase):
     __tablename__ = 'components'
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str]
 
 
-class EpicGroup(Base):
+class EpicGroup(Base, ReportBase):
     __tablename__ = 'epic_groups'
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str]
+
+
+class Product(Base, ReportBase):
+    __tablename__ = 'products'

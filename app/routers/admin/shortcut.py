@@ -5,7 +5,7 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from app.db.database import SessionLocal, update_saved
-from app.db.models import Label, CustomField, Story, StoryCustomFields, CustomFieldValue
+from app.db.models import Label, Story, StoryCustomFields, CustomFieldValue
 from app.db.schemas import CustomFieldBase, LabelBase
 from app.resources.resources import resources
 
@@ -44,11 +44,11 @@ async def get_custom_fields_from_shortcut(db: Session = Depends(get_db)):
                              value=value['value'])
             for value in field['values']
         ]
-        db_fields.append(CustomField(id=field['id'],
-                                     name=field['name'],
-                                     field_values=field_values))
+        db_fields.append(CustomFieldBase(id=field['id'],
+                                         name=field['name'],
+                                         field_values=field_values))
 
-    db_fields = await update_saved(db, CustomField, db_fields)
+    db_fields = await update_saved(db, CustomFieldBase, db_fields)
     return db_fields
 
 
@@ -56,6 +56,7 @@ async def get_custom_fields_from_shortcut(db: Session = Depends(get_db)):
 async def get_backlog_from_shortcut(db: Session = Depends(get_db)):
     labels = {label.id: label
               for label in await get_labels_from_shortcut(db)}
+
     await get_custom_fields_from_shortcut(db)
     stories = await resources.shortcut.get_stories(state='Önskemål', limit=-1)
     db_stories = [

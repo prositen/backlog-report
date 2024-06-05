@@ -7,6 +7,7 @@ from app.routers.admin.shortcut import get_db
 from app.routers.components import get_component_by_id
 from app.routers.epicgroups import get_epic_group_by_id
 from app.routers.persons import get_person_by_id
+from app.routers.products import get_product_by_id
 
 router = APIRouter(prefix="/stories", tags=["stories"])
 
@@ -88,6 +89,30 @@ async def remove_story_epic_group(story_id: int, epic_group_id: int,
     try:
         index = epic_group_ids.index(epic_group_id)
         story.epic_groups.pop(index)
+        db.commit()
+        db.refresh(story)
+    except ValueError:
+        pass
+    return story
+
+
+@router.put('/{story_id}/products/{product_id}', response_model=schemas.StoryBase)
+async def add_story_product(story_id: int, product_id: int, db: Session = Depends(get_db)):
+    story = await get_story_by_id(story_id, db)
+    product = await get_product_by_id(product_id, db)
+    story.products.append(product)
+    db.commit()
+    db.refresh(story)
+    return story
+
+
+@router.delete('/{story_id}/products/{product_id}', response_model=schemas.StoryBase)
+async def remove_story_product(story_id: int, product_id: int, db: Session = Depends(get_db)):
+    story = await get_story_by_id(story_id, db)
+    product_ids = [e.id for e in story.products]
+    try:
+        index = product_ids.index(product_id)
+        story.products.pop(index)
         db.commit()
         db.refresh(story)
     except ValueError:
