@@ -15,6 +15,8 @@ class StoryBase(BaseModel):
     labels: list[str]
     persons: list['Person']
     components: list['Component']
+    epic_groups: list['EpicGroup']
+    products: list['Product']
 
     active: bool
     priority: Optional[str]
@@ -48,40 +50,45 @@ class CustomFieldBase(BaseModel):
     name: str
 
 
+class Objective(BaseModel):
+    id: str
+    name: str
+
+
 class LabelBase(BaseModel):
     id: int
     name: str
-
-
-class PersonBase(BaseModel):
-    name: str
-
-
-class PersonCreate(PersonBase):
-    pass
-
-
-class Person(PersonBase):
-    id: int
 
 
 class LabelNames(BaseModel):
     name: str
 
 
-class ComponentBase(BaseModel):
-    name: str
-
-
-class ComponentCreate(ComponentBase):
-    pass
-
-
-class Component(ComponentBase):
-    id: int
-
-
 class BacklogResponse(BaseModel):
     items: list[StoryBase]
     count: int
     total: int
+
+
+class ReportFieldBase(BaseModel):
+    name: str
+
+
+class ReportField(ReportFieldBase):
+    id: int
+
+
+class Person(ReportField):
+    pass
+
+
+class Component(ReportField):
+    pass
+
+
+class EpicGroup(ReportField):
+    pass
+
+
+class Product(ReportField):
+    pass
