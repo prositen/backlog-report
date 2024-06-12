@@ -43,6 +43,7 @@ class StoryCustomFields(Base):
                                                      attr='value')
     name: AssociationProxy[str] = association_proxy(target_collection='custom_field_value',
                                                     attr='name')
+    story: Mapped['Story'] = relationship(back_populates='custom_fields')
 
 
 class Story(Base):
@@ -57,7 +58,7 @@ class Story(Base):
 
     # From shortcut
     custom_fields: Mapped[List['StoryCustomFields']] = relationship(
-        backref='story_custom_fields')
+        back_populates='story', cascade='all, delete-orphan')
     labels: Mapped[List['Label']] = relationship(secondary=story_labels)
 
     # Locally administrated
