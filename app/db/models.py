@@ -86,7 +86,8 @@ class CustomField(Base):
     __tablename__ = 'custom_fields'
     id: Mapped[str] = mapped_column(primary_key=True)
     name: Mapped[str]
-    field_values: Mapped[List['CustomFieldValue']] = relationship(back_populates='field')
+    field_values: Mapped[List['CustomFieldValue']] = relationship(back_populates='field',
+                                                                  cascade='all, delete-orphan')
 
 
 class CustomFieldValue(Base):
